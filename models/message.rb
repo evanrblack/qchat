@@ -14,6 +14,10 @@ class Message < Sequel::Model
     self.destination = Phony.normalize(destination) if destination
   end
 
+  def contact
+    Contact.find(phone_number: source)
+  end
+
   # Prepare the message to send to Plivo
   def plivoize
     {

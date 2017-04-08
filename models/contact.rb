@@ -13,6 +13,8 @@ class Contact < Sequel::Model
   end
 
   def messages
+    # Special Sequel voodoo
+    Message.where{(source =~ phone_number) | (destination =~ phone_number)}
   end
 
   def sent_messages

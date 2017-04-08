@@ -3,14 +3,22 @@ APP_ROOT = File.expand_path(File.dirname(__FILE__))
 
 # Initialize
 require File.join(APP_ROOT, 'config', 'initialize')
+require 'json'
 
 # This class represents the actual web application.
 class App < Sinatra::Base
   configure do
-    enable :sessions
     enable :method_override
     register Sinatra::Flash
-    register PagesController, SessionsController, MessagesController
+    register(PagesController,
+             SessionsController,
+             ContactsController,
+             MessagesController)
+    use Rack::Session::Cookie, key: 'rack.session',
+                               domain: 'localhost',
+                               path: '/',
+                               expire_after: 2592000,
+                               secret: 'change_me'
   end
 
   before do

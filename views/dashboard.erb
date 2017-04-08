@@ -6,8 +6,15 @@
           <h3 class="panel-title">Contacts</h3>
         </div>
         <div class="panel-body">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search">
+          <div id="contact-list">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search" v-model="filter">
+            </div>
+            <ul>
+              <li v-for="contact in filteredContacts">
+                {{ contact.name }} - {{ contact.phone_number }}
+              </li>
+            </ul>
           </div>
         </div>
       </div>

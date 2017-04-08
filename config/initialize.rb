@@ -1,5 +1,6 @@
 require 'bundler'
 Bundler.require
+require 'json'
 
 # ENV VARS
 ENV['RACK_ENV'] ||= 'development'
@@ -13,6 +14,7 @@ PLIVO = Plivo::RestAPI.new(ENV['PLIVO_AUTH_ID'], ENV['PLIVO_AUTH_TOKEN'])
 Sequel.extension :migration
 Sequel::Model.plugin :timestamps, update_on_create: true
 Sequel::Model.plugin :validation_helpers
+Sequel::Model.plugin :json_serializer
 # Connect to database
 Sequel.connect(ENV['DB_URL'])
 # Run migrations
