@@ -1,0 +1,5 @@
+# No databases
+*.sqlite3
+
+# No .env
+.env*
