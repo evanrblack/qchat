@@ -1,12 +1,47 @@
-<div class="container">
-  <form action="/send" method="post">
-    <fieldset>
-      <input type="hidden" name="source" value="14793451619">
-      <label for="destination">Destination</label>
-      <input type="tel" name="destination">
-      <label for="content">Content</label>
-      <textarea name="content"></textarea>
-      <input type="submit" value="Send" class="button-primary">
-    </fieldset>
-  </form>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Contacts</h3>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Messages</h3>
+        </div>
+        <div class="panel-body">
+          <form action="/send" method="post">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" name="content" class="form-control" placeholder="Message here...">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-primary">
+                    Send
+                  </button>
+                </span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Details</h3>
+        </div>
+        <div class="panel-body">
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+

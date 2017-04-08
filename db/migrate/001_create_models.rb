@@ -3,8 +3,9 @@ Sequel.migration do
     create_table :users do
       primary_key :id
 
-      String :email, null: false
+      String :email, null: false, unique: true
       String :password_hash, null: false
+      String :phone_number, null: false, unique: true 
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
@@ -13,7 +14,8 @@ Sequel.migration do
     create_table :contacts do
       primary_key :id
 
-      String :first_name, null: false
+      String :name
+      String :phone_number, null: false, unique: true
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
@@ -22,13 +24,16 @@ Sequel.migration do
     create_table :messages do
       primary_key :id
 
-      String :source, null: false
-      String :destination, null: false
+      String :source, null: false, index: true
+      String :destination, null: false, index: true
       String :direction, null: false
       String :content, text: true, null: false
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
+
+      index %i[source destination]
+      index %i[destination source]
     end
   end
 end
