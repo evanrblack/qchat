@@ -1,17 +1,18 @@
 (function() {
-  var contactList = new Vue({
-    el: '#contact-list',
+  var dashboard = new Vue({
+    el: '#dashboard',
     data: {
+      filter: '',
       contacts: [],
-      filter: 'Rob'
+      contact: {},
+      messages: []
     },
     computed: {
       filteredContacts: function() {
-        console.log(this);
-        return this.contacts.filter(function(contact) {
-          var lowercasedName = contact.name.toLowerCase();
+        return this.contacts.filter(function(c) {
+          var lowercasedName = c.name.toLowerCase();
           if (lowercasedName.includes(this.filter.toLowerCase())) {
-            return contact;
+            return c;
           }
         }, this);
       }

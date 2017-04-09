@@ -29,9 +29,10 @@ class Message < Sequel::Model
 
   # Turn Plivo data into Message
   def self.unplivoize(params)
-    Message.new(source: params['from_number'],
-                destination: params['to_number'],
-                direction: params['direction'],
-                content: params['text'])
+    puts params
+    Message.new(source: params['From'],
+                destination: params['To'],
+                direction: 'inbound',
+                content: params['Text'])
   end
 end
