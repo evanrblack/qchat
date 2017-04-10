@@ -10,10 +10,20 @@
             <input type="text" class="form-control" placeholder="Search" v-model="filter">
           </div>
           <div class="list-group">
-            <a href="#" class="list-group-item" v-for="c in filteredContacts" v-on:click="contact = c" v-bind:class="{ active: c.id == contact.id }">
-              {{ c.name }}<br>{{ c.phoneNumber }}
+            <a href="#" class="list-group-item" v-for="c in filteredContacts" v-on:click="getContact(c.id)" v-bind:class="{ active: c.id == contact.id }">
+              {{ c.first_name }} {{ c.last_name }}<br>{{ c.phone_number }}
             </a>
           </div>
+        </div>
+        <div class="panel-footer">
+          <form action="/contacts" method="post" v-on:submit.prevent="addContact">
+            <div class="input-group">
+              <input type="tel" name="phone_number" class="form-control" autocomplete="off" placeholder="Phone number">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">Add</button>
+              </span>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -22,18 +32,18 @@
         <div class="panel-heading">
           <h3 class="panel-title">Messages</h3>
         </div>
-        <div class="panel-body">
+        <div class="panel-body max-height-70 overflow-y">
           <ul class="list-unstyled">
-            <li v-for="m in messages">
-              {{ message.direction }}: {{ message.content }}
+            <li v-for="m in contact.messages">
+              {{ m.direction }}: {{ m.content }}
             </li>
           </ul>
         </div>
         <div class="panel-footer">
-          <form action="/messages" method="post">
+          <form action="/messages" method="post" v-on:submit.prevent="sendMessage">
             <div class="input-group">
-              <input type="hidden" name="destination" v-model="contact.phoneNumber">
-              <input type="text" name="content" class="form-control" placeholder="Message here..." autocomplete="off">
+              <input type="hidden" name="destination" v-model="contact.phone_number">
+              <input type="text" name="content" class="form-control" autocomplete="off" placeholder="Message">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">Send</button>
               </span>
@@ -47,8 +57,20 @@
         <div class="panel-heading">
           <h3 class="panel-title">Details</h3>
         </div>
-        <div class="panel-body">
-        </div>
+        <form v-bind:action="contactPath(contact)" method="post" v-on:submit.prevent="updateContact">
+          <div class="panel-body max-height-70 overflow-y">
+            <% {first_name: 'text', last_name: 'text', email: 'email', wedding_date: 'date', phone_number: 'tel', lead_source: 'text'}.each do |k, v| %>
+              <div class="form-group">
+                <label for="<%= k %>"><%= k %></label>
+                <input type="<%= v %>" name="<%= k %>" class="form-control" v-model="contact.<%= k %>">
+              </div>
+            <% end %>
+            <input type="hidden" name="_method" value="patch">
+          </div>
+          <div class="panel-footer text-right">
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

@@ -1,3 +1,5 @@
+require 'pry'
+
 module MessagesController
   extend Sinatra::Extension
 
@@ -13,12 +15,18 @@ module MessagesController
                              destination: params['destination'],
                              direction: 'outbound',
                              content: params['content'])
+      response = PLIVO.send_message(@message.plivoize)
+      @message.external_id = response[1]['message_uuid'][0]
       @message.save
-      PLIVO.send_message(@message.plivoize)
     elsif params['token'] == settings.webhook_token
       @message = Message.unplivoize(params)
+      if @message.contact.nil?
+        @contact = Contact.create(phone_number: @message.source)
+        notify('new_contact', @contact.to_json)
+      end
       @message.save
+      notify('new_message', @contact.to_json(include: %i[message]))
     end
-    json @message
+    @message.to_json
   end
 end

@@ -13,8 +13,7 @@ class Contact < Sequel::Model
   end
 
   def messages
-    # Special Sequel voodoo
-    Message.where{(source =~ phone_number) | (destination =~ phone_number)}
+    Message.where('source = ? OR destination = ?', phone_number, phone_number)
   end
 
   def sent_messages
@@ -23,5 +22,9 @@ class Contact < Sequel::Model
 
   def received_messages
     Messages.where(destination: phone_number)
+  end
+
+  def message
+    messages.last
   end
 end

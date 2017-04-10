@@ -14,8 +14,12 @@ Sequel.migration do
     create_table :contacts do
       primary_key :id
 
-      String :name
+      String :first_name
+      String :last_name
+      String :email
+      DateTime :wedding_date
       String :phone_number, null: false, unique: true
+      String :lead_source
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
@@ -24,6 +28,7 @@ Sequel.migration do
     create_table :messages do
       primary_key :id
 
+      String :external_id, null: false, unique: true
       String :source, null: false, index: true
       String :destination, null: false, index: true
       String :direction, null: false

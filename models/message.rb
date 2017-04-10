@@ -1,7 +1,7 @@
 class Message < Sequel::Model
   def validate
     super
-    validates_presence %i[source destination content]
+    validates_presence %i[external_id source destination content]
     %i[source destination].each do |side|
       number = send(side)
       errors.add(side, 'is invalid') unless Phony.plausible?(number, cc: '1')
@@ -29,8 +29,8 @@ class Message < Sequel::Model
 
   # Turn Plivo data into Message
   def self.unplivoize(params)
-    puts params
-    Message.new(source: params['From'],
+    Message.new(external_id: params['MessageUUID'],
+                source: params['From'],
                 destination: params['To'],
                 direction: 'inbound',
                 content: params['Text'])

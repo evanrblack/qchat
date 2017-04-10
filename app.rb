@@ -19,18 +19,26 @@ class App < Sinatra::Base
                                path: '/',
                                expire_after: 2592000,
                                secret: 'change_me'
+    helpers Sinatra::Streaming
+    set :connections, []
+  end
+
+  def notify(type, content)
+    settings.connections.each do |out|
+      out << "data: #{{type: type, content: content}.to_json}\n\n"
+    end
+  end
+
+  get '/stream', provides: 'text/event-stream' do
+    return 403 unless @current_user
+    stream(:keep_open) do |out|
+      settings.connections << out
+      out.callback { settings.connections.delete(out) }
+    end
   end
 
   before do
     @current_user = User.find(id: session[:id]) if session[:id]
-  end
-
-  post '/receive' do
-    # Access denied if webhook_token not present
-    return 403 unless params['token'] == settings.webhook_token
-    @message = Message.unplivoize(params)
-    @message.save
-    return 200
   end
 end
 

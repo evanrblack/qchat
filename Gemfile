@@ -11,9 +11,6 @@ gem 'sinatra-contrib'
 # Flashes for Sinatra
 gem 'sinatra-flash'
 
-# Multi-process web server
-# gem 'puma'
-
 # Fast and simple web server
 gem 'thin'
 

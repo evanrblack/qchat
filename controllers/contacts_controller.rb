@@ -1,28 +1,32 @@
 module ContactsController
   extend Sinatra::Extension
 
-  get '/contacts' do
+  get '/contacts', provides: :json do
     return 403 unless @current_user
-    @contacts = Contact.all.map do |c|
-      {
-        id: c.id,
-        name: c.name,
-        phoneNumber: c.phone_number
-      }
-    end
-    json @contacts
+    Contact.to_json
   end
 
-  get '/contacts/:id' do
+  post '/contacts', provides: :json do
     return 403 unless @current_user
-    @contact = Contact.find(id: id)
-    json @contact
+    Contact.create(phone_number: params['phone_number']).to_json
   end
 
-  get '/contacts/:id/messages' do
+  get '/contacts/:id', provides: :json do
     return 403 unless @current_user
-    @contact = Contact.find(id: id)
-    @messages = @contact.messages
-    json @messages
+    Contact.find(id: params['id']).to_json
+  end
+
+  patch '/contacts/:id', provides: :json do
+    return 403 unless @current_user
+    @contact = Contact.find(id: params['id'])
+    @contact.update_fields(params, %i[first_name last_name
+                                      email wedding_date
+                                      phone_number lead_source])
+    @contact.to_json
+  end
+
+  get '/contacts/:id/messages', provides: :json do
+    return 403 unless @current_user
+    Contact.find(id: params[:id]).messages.to_json
   end
 end
