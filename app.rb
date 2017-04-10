@@ -15,17 +15,18 @@ class App < Sinatra::Base
              ContactsController,
              MessagesController)
     use Rack::Session::Cookie, key: 'rack.session',
-                               domain: 'localhost',
-                               path: '/',
                                expire_after: 2592000,
-                               secret: 'change_me'
+                               secret: ENV['SECRET_TOKEN'] || 'change_me'
     helpers Sinatra::Streaming
     set :connections, []
   end
 
   def notify(type, content)
+    # Sequels to_json has nice optionals that to_hash doesnt
+    content_hash = JSON.parse(content)
+    logger.debug "event: { type: #{type}, content: #{content_hash}}"
     settings.connections.each do |out|
-      out << "data: #{{type: type, content: content}.to_json}\n\n"
+      out << "data: #{{type: type, content: content_hash}.to_json}\n\n"
     end
   end
 

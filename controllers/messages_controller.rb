@@ -18,15 +18,13 @@ module MessagesController
       response = PLIVO.send_message(@message.plivoize)
       @message.external_id = response[1]['message_uuid'][0]
       @message.save
+      return @message.to_json
     elsif params['token'] == settings.webhook_token
       @message = Message.unplivoize(params)
-      if @message.contact.nil?
-        @contact = Contact.create(phone_number: @message.source)
-        notify('new_contact', @contact.to_json)
-      end
+      @contact = Contact.find_or_create(phone_number: @message.source)
       @message.save
-      notify('new_message', @contact.to_json(include: %i[message]))
+      notify('new_message', @contact.to_json(include: %i[messages]))
+      return 200
     end
-    @message.to_json
   end
 end

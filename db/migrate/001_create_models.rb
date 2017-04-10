@@ -19,7 +19,8 @@ Sequel.migration do
       String :email
       DateTime :wedding_date
       String :phone_number, null: false, unique: true
-      String :lead_source
+      String :lead_source,
+      String :notes, text: true
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false

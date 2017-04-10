@@ -10,7 +10,7 @@
             <input type="text" class="form-control" placeholder="Search" v-model="filter">
           </div>
           <div class="list-group">
-            <a href="#" class="list-group-item" v-for="c in filteredContacts" v-on:click="getContact(c.id)" v-bind:class="{ active: c.id == contact.id }">
+            <a href="#" class="list-group-item" v-for="c in contacts" v-on:click="getContact(c.id)" v-bind:class="{ active: c.id == contact.id }" v-if="filterContact(c)">
               {{ c.first_name }} {{ c.last_name }}<br>{{ c.phone_number }}
             </a>
           </div>
@@ -18,7 +18,7 @@
         <div class="panel-footer">
           <form action="/contacts" method="post" v-on:submit.prevent="addContact">
             <div class="input-group">
-              <input type="tel" name="phone_number" class="form-control" autocomplete="off" placeholder="Phone number">
+              <input type="tel" name="phone_number" class="form-control" autocomplete="off" placeholder="Phone number" v-model="newContact.phone_number">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">Add</button>
               </span>
@@ -32,18 +32,18 @@
         <div class="panel-heading">
           <h3 class="panel-title">Messages</h3>
         </div>
-        <div class="panel-body max-height-70 overflow-y">
+        <div id="message-scroll" class="panel-body max-height-70 overflow-y">
           <ul class="list-unstyled">
             <li v-for="m in contact.messages">
-              {{ m.direction }}: {{ m.content }}
+              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'inbound' }">{{ (m.direction == 'inbound') ? (contact.first_name || 'Unknown') : 'Admin' }}</strong> {{ m.content }}
             </li>
           </ul>
         </div>
         <div class="panel-footer">
-          <form action="/messages" method="post" v-on:submit.prevent="sendMessage">
+          <form action="/messages" method="post" v-on:submit.prevent="addMessage">
+            <input type="hidden" name="destination" v-model="contact.phone_number">
             <div class="input-group">
-              <input type="hidden" name="destination" v-model="contact.phone_number">
-              <input type="text" name="content" class="form-control" autocomplete="off" placeholder="Message">
+              <input type="text" name="content" class="form-control" autocomplete="off" placeholder="Message" v-model="newMessage.content">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">Send</button>
               </span>

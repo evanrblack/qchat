@@ -14,6 +14,7 @@ class Contact < Sequel::Model
 
   def messages
     Message.where('source = ? OR destination = ?', phone_number, phone_number)
+           .order(:created_at)
   end
 
   def sent_messages
@@ -22,9 +23,5 @@ class Contact < Sequel::Model
 
   def received_messages
     Messages.where(destination: phone_number)
-  end
-
-  def message
-    messages.last
   end
 end

@@ -3,7 +3,7 @@ module ContactsController
 
   get '/contacts', provides: :json do
     return 403 unless @current_user
-    Contact.to_json
+    Contact.to_json(only: %i[id first_name last_name phone_number])
   end
 
   post '/contacts', provides: :json do

@@ -4,34 +4,42 @@ var dashboard = (function() {
     data: {
       filter: '',
       contacts: [],
-      newContact: {},
+      newContact: { phone_number: '' },
       contact: {},
+      newMessage: { source: '' },
       eventSource: new EventSource('/stream')
     },
-    computed: {
-      filteredContacts: function() {
-        return this.contacts.filter(function(c) {
-          var concatenated = (c.first_name + c.last_name + c.phone_number)
-          var lowercased = concatenated.toLowerCase();
-          if (lowercased.includes(this.filter.toLowerCase())) {
-            return c;
-          }
-        }, this);
-      }
-    },
-    methods: { 
-      getContact: function(id) {
+    methods: {
+      resetContact: function(contact) {
         var index = this.contacts.findIndex(function(c) {
-          return c.id == id;
+          return c.id == contact.id;
         }, this);
-        this.contact = this.contacts[index];
-        
-        // Get messages
-        var path = '/contacts/' + id + '/messages'
-        this.$http.get(path).then(function(response){
-          this.contact.messages = response.body;
+        this.contacts[index] = contact;
+        return this.contacts[index];
+      },
+      filterContact: function(contact) {
+        var concatenated = (contact.first_name + 
+                            contact.last_name + 
+                            contact.phone_number);
+        var lowercased = concatenated.toLowerCase();
+        return lowercased.includes(this.filter.toLowerCase())
+      },
+      getContact: function(id) {
+        // getContact
+        var contactPath = '/contacts/' + id;
+        this.$http.get(contactPath).then(function(response) {
+          this.contact = this.resetContact(response.body);
+
+          // Get messages
+          var messagesPath = '/contacts/' + this.contact.id + '/messages';
+          this.$http.get(messagesPath).then(function(response){
+            this.$set(this.contact, 'messages', response.body);
+            this.scrollToBottom();
+          }, function(response) {
+            alert('Unable to get messages');
+          });
         }, function(response) {
-          alert('Unable to get messages');
+          alert('Unable to get contact');
         });
       },
       contactPath: function(contact) {
@@ -40,41 +48,72 @@ var dashboard = (function() {
       addContact: function(event) {
         var formData = new FormData(event.target);
         this.$http.post('/contacts', formData).then(function(response) {
-          this.contact = response.body;
-          this.contacts.push(this.contact);
+          this.contact = this.contacts.push(response.body);
+          this.newContact.phone_number = '';
         }, function(response) {
-          alert('Invalid number'); 
+          alert('Unable to add contact'); 
         });
       },
       updateContact: function(event) {
         var path = '/contacts/' + this.contact.id;
         var formData = new FormData(event.target);
         this.$http.post(path, formData).then(function(response) {
-          this.contact = response.body;
+          var messages = this.contact.messages;
+          this.contact = this.resetContact(response.body);
+          this.contact.messages = messages;
         }, function(response) {
           alert('Unable to update contact');
-        })
+        });
+      },
+      addMessage: function(event) {
+        var formData = new FormData(event.target);
+        this.$http.post('/messages', formData).then(function(response) {
+          this.contact.messages.push(response.body);
+          this.newMessage.content = '';
+          this.scrollToBottom();
+        }, function(response) {
+          alert('Unable to post message');
+        });
+      },
+      scrollToBottom: function() {
+        setTimeout(function() {
+          var container = document.querySelector('#message-scroll');
+          container.scrollTop = container.scrollHeight;
+        }, 200);
       }
     },
     created: function() {
+      var vue = this;
       // Set up eventSource
       this.eventSource.onmessage = function(msg) {
         var data = JSON.parse(msg.data);
         var type = data.type;
         var content = data.content;
 
-        console.log(type, content);
-
         var handlers = {
-          'new_contact': function(contact) {
-            notify('New contact: ' + contact.phone_number);
-          },
           'new_message': function(contact) {
-            notify('New message from ' + contact.name + ' (' + contact.phone_number + '): "' + contact.message + '"');
+            // On that contact already
+            if (vue.contact.id == contact.id) {
+              vue.contact = vue.resetContact(contact);
+            } else {
+              // Set up notification
+              var name = 'Unknown';
+              var message = contact.messages[contact.messages.length - 1];
+              if (contact.first_name && contact.last_name) {
+                name = contact.first_name + ' ' + contact.last_name;
+              }
+              var title = name + ' (' + contact.phone_number + ')';
+              // Create notification
+              var notification = notify(title, message.content);
+              notification.onclick = function(event) {
+                vue.contact = vue.resetContact(contact);
+                vue.scrollToBottom();
+              };
+            }
           }
         }
 
-        handlers[type](msg);
+        handlers[type](content);
       }
 
       // Get list of contacts
@@ -86,9 +125,9 @@ var dashboard = (function() {
 });
 
 Notification.requestPermission();
-function notify(msg) {
+function notify(title, body) {
   if (Notification.permission == 'granted') {
-    var notification = new Notification(msg);
+    return new Notification(title, {body: body});
   }
 }
 
