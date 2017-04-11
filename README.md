@@ -1,4 +1,4 @@
-# Cake Sprint
+# qChat
 ## Simple SMS CRM Platform
 
 ---

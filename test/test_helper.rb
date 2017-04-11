@@ -6,4 +6,4 @@ require 'rack/test'
 require 'minitest/reporters'
 Minitest::Reporters.use!
 
-require_relative '../cake_sprint.rb'
+require_relative '../app.rb'
