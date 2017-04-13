@@ -24,6 +24,14 @@
               </span>
             </div>
           </form>
+          <form action="/contacts" method="post" enctype="multipart/form-data">
+            <div class="input-group">
+              <input type="file" name="file" class="form-control">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">Upload</button>
+              </span>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -35,15 +43,15 @@
         <div id="message-scroll" class="panel-body max-height-70 overflow-y">
           <ul class="list-unstyled">
             <li v-for="m in contact.messages">
-              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'inbound' }">{{ (m.direction == 'inbound') ? (contact.first_name || 'Unknown') : 'Admin' }}</strong> {{ m.content }}
+              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'in' }">{{ (m.direction == 'in') ? (contact.first_name || 'Unknown') : 'Admin' }}</strong> {{ m.text }}
             </li>
           </ul>
         </div>
         <div class="panel-footer">
           <form action="/messages" method="post" v-on:submit.prevent="addMessage">
-            <input type="hidden" name="destination" v-model="contact.phone_number">
+            <input type="hidden" name="to" v-model="contact.phone_number">
             <div class="input-group">
-              <input type="text" name="content" class="form-control" autocomplete="off" placeholder="Message" v-model="newMessage.content">
+              <input type="text" name="content" class="form-control" autocomplete="off" placeholder="Message" v-model="newMessage.text">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">Send</button>
               </span>

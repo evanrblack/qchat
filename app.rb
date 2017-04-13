@@ -15,8 +15,9 @@ class App < Sinatra::Base
              ContactsController,
              MessagesController)
     use Rack::Session::Cookie, key: 'rack.session',
-                               expire_after: 2592000,
+                               expire_after: 2_592_000,
                                secret: ENV['SECRET_TOKEN'] || 'change_me'
+    use Rack::PostBodyContentTypeParser
     helpers Sinatra::Streaming
     set :connections, []
   end
@@ -26,7 +27,7 @@ class App < Sinatra::Base
     content_hash = JSON.parse(content)
     logger.debug "event: { type: #{type}, content: #{content_hash}}"
     settings.connections.each do |out|
-      out << "data: #{{type: type, content: content_hash}.to_json}\n\n"
+      out << "data: #{{ type: type, content: content_hash }.to_json}\n\n"
     end
   end
 
@@ -42,4 +43,3 @@ class App < Sinatra::Base
     @current_user = User.find(id: session[:id]) if session[:id]
   end
 end
-

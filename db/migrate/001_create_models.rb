@@ -5,7 +5,7 @@ Sequel.migration do
 
       String :email, null: false, unique: true
       String :password_hash, null: false
-      String :phone_number, null: false, unique: true 
+      String :phone_number, null: false, unique: true
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
@@ -17,9 +17,9 @@ Sequel.migration do
       String :first_name
       String :last_name
       String :email
-      DateTime :wedding_date
+      Date :wedding_date
       String :phone_number, null: false, unique: true
-      String :lead_source,
+      String :lead_source
       String :notes, text: true
 
       DateTime :created_at, null: false
@@ -29,11 +29,13 @@ Sequel.migration do
     create_table :messages do
       primary_key :id
 
-      String :external_id, null: false, unique: true
-      String :source, null: false, index: true
-      String :destination, null: false, index: true
+      String :type, null: false
       String :direction, null: false
-      String :content, text: true, null: false
+      String :external_id, null: false, unique: true
+      String :from, null: false, index: true
+      String :to, null: false, index: true
+      String :text, text: true, null: false
+      String :state, null: false
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false

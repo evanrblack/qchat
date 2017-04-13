@@ -11,6 +11,9 @@ gem 'sinatra-contrib'
 # Flashes for Sinatra
 gem 'sinatra-flash'
 
+# Additions to Rack
+gem 'rack-contrib'
+
 # Fast and simple web server
 gem 'thin'
 
@@ -30,7 +33,7 @@ gem 'faraday'
 gem 'dotenv'
 
 # Send and receive SMS messages
-gem 'plivo'
+gem 'ruby-bandwidth'
 
 # Password hasher
 gem 'bcrypt'

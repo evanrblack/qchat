@@ -9,7 +9,7 @@ class Contact < Sequel::Model
 
   def before_validation
     super
-    self.phone_number = Phony.normalize(phone_number) if phone_number
+    self.phone_number = Phony.normalize(phone_number, cc: '1') if phone_number
   end
 
   def messages

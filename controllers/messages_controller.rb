@@ -1,5 +1,3 @@
-require 'pry'
-
 module MessagesController
   extend Sinatra::Extension
 
@@ -8,23 +6,30 @@ module MessagesController
   end
 
   post '/messages' do
-    @token_match = params['token'] == settings.webhook_token
-    return 403 unless @current_user || @token_match
     if @current_user
-      @message = Message.new(source: ENV['PLIVO_PHONE_NUMBER'],
-                             destination: params['destination'],
-                             direction: 'outbound',
-                             content: params['content'])
-      response = PLIVO.send_message(@message.plivoize)
-      @message.external_id = response[1]['message_uuid'][0]
-      @message.save
-      return @message.to_json
+      # Don't save model here; bandwidth will send callback for sent message
+      options = {
+        from: @current_user.phone_number,
+        to: params['to'],
+        text: params['text']
+      }
+      Bandwidth::Message.create(BANDWIDTH_CLIENT, options)
     elsif params['token'] == settings.webhook_token
-      @message = Message.unplivoize(params)
-      @contact = Contact.find_or_create(phone_number: @message.source)
+      # Callback for both sent and received messages
+      @message = Message.new(type: params['eventType'],
+                             direction: params['direction'],
+                             external_id: params['messageId'],
+                             from: params['from'],
+                             to: params['to'],
+                             text: params['text'],
+                             state: params['state'])
       @message.save
-      notify('new_message', @contact.to_json(include: %i[messages]))
-      return 200
+      if @message.direction == 'in'
+        @contact = Contact.find_or_create(phone_number: @message.from)
+        notify('new_message', @contact.to_json(include: %i[messages]))
+      end
+    else
+      return 403
     end
   end
 end

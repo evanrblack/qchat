@@ -24,4 +24,3 @@ module SessionsController
     redirect '/'
   end
 end
-

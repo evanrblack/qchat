@@ -6,8 +6,11 @@ require 'json'
 ENV['RACK_ENV'] ||= 'development'
 Dotenv.load(".env.#{ENV['RACK_ENV']}")
 
-# PLIVO
-PLIVO = Plivo::RestAPI.new(ENV['PLIVO_AUTH_ID'], ENV['PLIVO_AUTH_TOKEN'])
+# BANDWIDTH
+BANDWIDTH_CLIENT =
+  Bandwidth::Client.new(user_id: ENV['BANDWIDTH_USER_ID'],
+                        api_token: ENV['BANDWIDTH_API_TOKEN'],
+                        api_secret: ENV['BANDWIDTH_API_SECRET'])
 
 # DATABASE + MODELS
 # Load sequel and extensions / plugins
@@ -15,6 +18,8 @@ Sequel.extension :migration
 Sequel::Model.plugin :timestamps, update_on_create: true
 Sequel::Model.plugin :validation_helpers
 Sequel::Model.plugin :json_serializer
+# Turn off strict param setting
+Sequel::Model.strict_param_setting = false
 # Connect to database
 Sequel.connect(ENV['DB_URL'])
 # Run migrations
@@ -26,4 +31,3 @@ CONTROLLER_DIR = File.join(APP_ROOT, 'controllers/*.rb')
 Dir[MODEL_DIR, CONTROLLER_DIR].each do |file|
   require file
 end
-

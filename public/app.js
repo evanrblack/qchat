@@ -5,8 +5,8 @@ var dashboard = (function() {
       filter: '',
       contacts: [],
       newContact: { phone_number: '' },
-      contact: {},
-      newMessage: { source: '' },
+      contact: { id: null },
+      newMessage: { text: '' },
       eventSource: new EventSource('/stream')
     },
     methods: {
@@ -18,8 +18,8 @@ var dashboard = (function() {
         return this.contacts[index];
       },
       filterContact: function(contact) {
-        var concatenated = (contact.first_name + 
-                            contact.last_name + 
+        var concatenated = (contact.first_name + ' ' + 
+                            contact.last_name + ' ' +
                             contact.phone_number);
         var lowercased = concatenated.toLowerCase();
         return lowercased.includes(this.filter.toLowerCase())
@@ -48,7 +48,8 @@ var dashboard = (function() {
       addContact: function(event) {
         var formData = new FormData(event.target);
         this.$http.post('/contacts', formData).then(function(response) {
-          this.contact = this.contacts.push(response.body);
+          this.contact = response.body;
+          this.contacts.push(this.contact);
           this.newContact.phone_number = '';
         }, function(response) {
           alert('Unable to add contact'); 
@@ -68,9 +69,12 @@ var dashboard = (function() {
       addMessage: function(event) {
         var formData = new FormData(event.target);
         this.$http.post('/messages', formData).then(function(response) {
-          this.contact.messages.push(response.body);
-          this.newMessage.content = '';
-          this.scrollToBottom();
+          // Should be handled by SSE, but immediate feedback is nice
+          this.contact.messages.push({
+            direction: 'out',
+            text: this.newMessage.text
+          });
+          this.newMessage.text = '';
         }, function(response) {
           alert('Unable to post message');
         });
@@ -92,6 +96,7 @@ var dashboard = (function() {
 
         var handlers = {
           'new_message': function(contact) {
+            // Handles only inbound
             // On that contact already
             if (vue.contact.id == contact.id) {
               vue.contact = vue.resetContact(contact);
@@ -108,6 +113,7 @@ var dashboard = (function() {
               notification.onclick = function(event) {
                 vue.contact = vue.resetContact(contact);
                 vue.scrollToBottom();
+                this.close();
               };
             }
           }
