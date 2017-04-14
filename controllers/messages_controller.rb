@@ -1,5 +1,3 @@
-require 'pry'
-
 module MessagesController
   extend Sinatra::Extension
 
