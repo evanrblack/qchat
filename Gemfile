@@ -67,6 +67,8 @@ group :development do
 end
 
 group :production do
+  # Database adapter... for now
+  gem 'sqlite3'
 end
 
 group :test do
