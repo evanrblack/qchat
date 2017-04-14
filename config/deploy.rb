@@ -17,6 +17,17 @@ set :deploy_to, "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 before 'deploy:starting', 'dotenv:upload'
 after 'deploy:finishing', 'thin:start'
 
+namespace :deploy do
+  desc "Set RACK_ENV to production"
+  task :set_env do
+    on roles(:app) do
+      execute 'RACK_ENV=production'
+    end
+  end
+
+  before :starting, :set_env
+end
+
 namespace :thin do
   desc "Create directories for Thin pids and sockets"
   task :make_dirs do
