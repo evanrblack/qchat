@@ -1,4 +1,5 @@
 environment: production
+daemonize: true
 pid: tmp/pids/thin.pid
 log: log/thin.log
 socket: tmp/sockets/thin.sock
