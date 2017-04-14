@@ -3,53 +3,60 @@ var dashboard = (function() {
     el: '#dashboard',
     data: {
       filter: '',
-      contacts: [],
+      contacts: {},
       newContact: { phone_number: '' },
       contact: { id: null },
       newMessage: { text: '' },
       eventSource: new EventSource('/stream')
     },
+    computed: {
+      contactPath: function() {
+        return '/contacts/' + this.contact.id;
+      }
+    },
     methods: {
-      resetContact: function(contact) {
-        var index = this.contacts.findIndex(function(c) {
-          return c.id == contact.id;
-        }, this);
-        this.contacts[index] = contact;
-        return this.contacts[index];
+      getContacts: function() {
+        this.$http.get('/contacts').then(function(response) {
+          response.body.forEach(function(c) {
+            this.$set(this.contacts, c.id, c);
+          }, this);
+        }, function(response) {
+          alert('Unable to get contacts'); 
+        });
       },
-      filterContact: function(contact) {
-        var concatenated = (contact.first_name + ' ' + 
-                            contact.last_name + ' ' +
-                            contact.phone_number);
-        var lowercased = concatenated.toLowerCase();
-        return lowercased.includes(this.filter.toLowerCase())
+      filterContact: function(c) {
+        var lowerCasedFilter = this.filter.toLowerCase();
+        var concatenated = (c.first_name + ' ' + 
+                            c.last_name + ' ' +
+                            c.phone_number);
+        var lowerCased = concatenated.toLowerCase();
+        return lowerCased.includes(lowerCasedFilter);
       },
       getContact: function(id) {
-        // getContact
-        var contactPath = '/contacts/' + id;
-        this.$http.get(contactPath).then(function(response) {
-          this.contact = this.resetContact(response.body);
-
-          // Get messages
-          var messagesPath = '/contacts/' + this.contact.id + '/messages';
-          this.$http.get(messagesPath).then(function(response){
-            this.$set(this.contact, 'messages', response.body);
-            this.scrollToBottom();
-          }, function(response) {
-            alert('Unable to get messages');
-          });
+        var path = '/contacts/' + id;
+        this.$http.get(path).then(function(response) {
+          this.contact = response.body;
+          this.contacts[this.contact.id] = this.contact;
+          this.getMessages();
         }, function(response) {
           alert('Unable to get contact');
         });
       },
-      contactPath: function(contact) {
-        return '/contacts/' + contact.id;
+      getMessages: function() {
+        var path = '/contacts/' + this.contact.id + '/messages';
+        this.$http.get(path).then(function(response){
+          this.$set(this.contact, 'messages', response.body);
+          this.scrollToBottom();
+        }, function(response) {
+          alert('Unable to get messages');
+        });
       },
       addContact: function(event) {
+        var path = '/contacts'
         var formData = new FormData(event.target);
-        this.$http.post('/contacts', formData).then(function(response) {
-          this.contact = response.body;
-          this.contacts.push(this.contact);
+        this.$http.post(path, formData).then(function(response) {
+          var contact = response.body;
+          this.getContact(contact.id);
           this.newContact.phone_number = '';
         }, function(response) {
           alert('Unable to add contact'); 
@@ -60,21 +67,21 @@ var dashboard = (function() {
         var formData = new FormData(event.target);
         this.$http.post(path, formData).then(function(response) {
           var messages = this.contact.messages;
-          this.contact = this.resetContact(response.body);
+          this.contact = response.body;
+          this.contacts[this.contact.id] = this.contact;
           this.contact.messages = messages;
         }, function(response) {
           alert('Unable to update contact');
         });
       },
       addMessage: function(event) {
+        var button = event.target.querySelector('button');
+        button.disabled = true;
         var formData = new FormData(event.target);
         this.$http.post('/messages', formData).then(function(response) {
-          // Should be handled by SSE, but immediate feedback is nice
-          this.contact.messages.push({
-            direction: 'out',
-            text: this.newMessage.text
-          });
+          this.contact.messages.push(response.body);
           this.newMessage.text = '';
+          button.disabled = false;
         }, function(response) {
           alert('Unable to post message');
         });
@@ -83,7 +90,7 @@ var dashboard = (function() {
         setTimeout(function() {
           var container = document.querySelector('#message-scroll');
           container.scrollTop = container.scrollHeight;
-        }, 200);
+        }, 300);
       }
     },
     created: function() {
@@ -96,10 +103,10 @@ var dashboard = (function() {
 
         var handlers = {
           'new_message': function(contact) {
-            // Handles only inbound
             // On that contact already
             if (vue.contact.id == contact.id) {
-              vue.contact = vue.resetContact(contact);
+              vue.contact = contact
+              vue.contacts[vue.contact.id] = vue.contact;
             } else {
               // Set up notification
               var name = 'Unknown';
@@ -109,23 +116,20 @@ var dashboard = (function() {
               }
               var title = name + ' (' + contact.phone_number + ')';
               // Create notification
-              var notification = notify(title, message.content);
+              var notification = notify(title, message.text);
               notification.onclick = function(event) {
-                vue.contact = vue.resetContact(contact);
-                vue.scrollToBottom();
+                vue.getContact(contact.id);
                 this.close();
               };
             }
           }
         }
 
+        // Run the associated function
         handlers[type](content);
       }
 
-      // Get list of contacts
-      this.$http.get('/contacts').then(function(response) {
-        this.contacts = response.body;
-      });
+      this.getContacts();
     }
   });
 });

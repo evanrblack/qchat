@@ -23,7 +23,11 @@ module ContactsController
                      end
         contact.wedding_date = fixed_date
 
-        contact.save
+        begin
+          contact.save
+        rescue
+          nil
+        end
       end
       redirect '/'
     else

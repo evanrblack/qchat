@@ -40,8 +40,8 @@ Sequel.migration do
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
 
-      index %i[source destination]
-      index %i[destination source]
+      index %i[from to]
+      index %i[to from]
     end
   end
 end

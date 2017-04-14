@@ -10,8 +10,8 @@ class Message < Sequel::Model
 
   def before_validation
     super
-    self.from = Phony.normalize(source) if from
-    self.to = Phony.normalize(destination) if to
+    self.from = Phony.normalize(from) if from
+    self.to = Phony.normalize(to) if to
   end
 
   def contact

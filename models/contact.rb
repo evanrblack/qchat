@@ -13,15 +13,15 @@ class Contact < Sequel::Model
   end
 
   def messages
-    Message.where('source = ? OR destination = ?', phone_number, phone_number)
+    Message.where('`from` = ? OR `to` = ?', phone_number, phone_number)
            .order(:created_at)
   end
 
   def sent_messages
-    Message.where(source: phone_number)
+    Message.where(from: phone_number)
   end
 
   def received_messages
-    Messages.where(destination: phone_number)
+    Messages.where(to: phone_number)
   end
 end

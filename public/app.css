@@ -6,11 +6,19 @@ body {
   margin-bottom: 0;
 }
 
-.max-height-70 {
+.max-height-60 {
   max-height: 60vh;
 }
 
 .overflow-y {
   overflow-y: auto;
+}
+
+.message-in {
+
+}
+
+.message-out {
+
 }
 
