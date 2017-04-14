@@ -1,3 +1,7 @@
+# Nothing in temp or log
+tmp/*
+log/*
+
 # No databases
 *.sqlite3
 
