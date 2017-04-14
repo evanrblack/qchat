@@ -47,12 +47,12 @@ group :development do
 
   # Deployment tool
   gem 'capistrano'
+  # RVM tasks for Capistrano
+  gem 'capistrano-rvm'
   # Bundler tasks for Capistrano
   gem 'capistrano-bundler'
-  # Chruby tasks for Capistrano
-  gem 'capistrano-chruby'
-  # Puma tasks for Capistrano
-  gem 'capistrano3-puma'
+  # Thin tasks for Capistrano
+  gem 'capistrano-thin'
   # Resque tasks for Capistrano
   gem 'capistrano-resque'
 
@@ -67,8 +67,6 @@ group :development do
 end
 
 group :production do
-  # Database adapter
-  # gem 'mysql2'
 end
 
 group :test do
