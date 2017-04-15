@@ -66,14 +66,18 @@ namespace :db do
   desc "Migrate database"
   task :migrate do
     on roles(:app) do
-      execute :rake, 'db:migrate'
+      within release_path do
+        execute :rake, 'db:migrate'
+      end
     end
   end
 
   desc "Roll back database"
   task :rollback
   on roles(:app) do
-    execute :rake, 'db:rollback'
+    within release_path do
+      execute :rake, 'db:rollback'
+    end
   end
 end
 
