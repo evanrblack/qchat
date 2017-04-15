@@ -14,7 +14,6 @@ BANDWIDTH_CLIENT =
 
 # DATABASE + MODELS
 # Load sequel and extensions / plugins
-Sequel.extension :migration
 Sequel::Model.plugin :timestamps, update_on_create: true
 Sequel::Model.plugin :validation_helpers
 Sequel::Model.plugin :json_serializer
@@ -22,8 +21,6 @@ Sequel::Model.plugin :json_serializer
 Sequel::Model.strict_param_setting = false
 # Connect to database
 Sequel.connect(ENV['DB_URL'])
-# Run migrations
-Sequel::Migrator.apply(Sequel::DATABASES.first, 'db/migrate')
 
 # Load models and controllers
 MODEL_DIR = File.join(APP_ROOT, 'models/*.rb')
