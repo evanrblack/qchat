@@ -154,6 +154,7 @@ DEPENDENCIES
   phony
   pry
   rack-contrib
+  rake
   redis
   resque
   rubocop

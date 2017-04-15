@@ -19,6 +19,9 @@ gem 'thin'
 # Communication with Redis
 gem 'redis'
 
+# Simple task interface
+gem 'rake'
+
 # Easy background jobs using Redis
 gem 'resque'
 
@@ -40,10 +43,10 @@ gem 'bcrypt'
 # Handles phone numbers
 gem 'phony'
 
-group :development do
-  # Database adapter
-  gem 'sqlite3'
+# Database adapter
+gem 'sqlite3'
 
+group :development do
   # Deployment tool
   gem 'capistrano'
   # RVM tasks for Capistrano
@@ -66,8 +69,6 @@ group :development do
 end
 
 group :production do
-  # Database adapter... for now
-  gem 'sqlite3'
 end
 
 group :test do
