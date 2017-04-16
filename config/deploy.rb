@@ -19,7 +19,7 @@ set :deploy_to, "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 
 before 'deploy:started', 'dotenv:upload'
 before 'deploy:started', 'deploy:make_dirs'
-#after 'deploy:updated', 'db:migrate'
+after 'deploy:updated', 'db:migrate'
 after 'deploy:finished', 'thin:smart_restart'
 
 namespace :deploy do
@@ -66,7 +66,7 @@ namespace :db do
   desc "Migrate database"
   task :migrate do
     on roles(:app) do
-      within release_path do
+      within current_path do
         execute :rake, 'db:migrate'
       end
     end
@@ -75,7 +75,7 @@ namespace :db do
   desc "Roll back database"
   task :rollback
   on roles(:app) do
-    within release_path do
+    within current_path do
       execute :rake, 'db:rollback'
     end
   end
