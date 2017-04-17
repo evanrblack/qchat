@@ -33,6 +33,7 @@ class App < Sinatra::Base
 
   get '/stream', provides: 'text/event-stream' do
     return 403 unless @current_user
+    headers 'X-Accel-Buffering' => 'no'
     stream(:keep_open) do |out|
       settings.connections << out
       out.callback { settings.connections.delete(out) }
