@@ -5,9 +5,17 @@ var dashboard = (function() {
       filter: '',
       contacts: {},
       newContact: { phone_number: '' },
-      contact: { id: null },
+      contact: { id: null, messages: [] },
       newMessage: { text: '' },
       eventSource: new EventSource('/stream')
+    },
+    watch: {
+      'contact.messages': function() {
+        setTimeout(function() {
+          var container = document.querySelector('#message-scroll');
+          container.scrollTop = container.scrollHeight;
+        }, 300);
+      }
     },
     computed: {
       contactPath: function() {
@@ -46,7 +54,6 @@ var dashboard = (function() {
         var path = '/contacts/' + this.contact.id + '/messages';
         this.$http.get(path).then(function(response){
           this.$set(this.contact, 'messages', response.body);
-          this.scrollToBottom();
         }, function(response) {
           alert('Unable to get messages');
         });
@@ -85,12 +92,6 @@ var dashboard = (function() {
         }, function(response) {
           alert('Unable to post message');
         });
-      },
-      scrollToBottom: function() {
-        setTimeout(function() {
-          var container = document.querySelector('#message-scroll');
-          container.scrollTop = container.scrollHeight;
-        }, 300);
       }
     },
     created: function() {
