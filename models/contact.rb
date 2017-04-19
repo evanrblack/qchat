@@ -2,6 +2,9 @@ class Contact < Sequel::Model
   def validate
     super
     validates_presence %i[phone_number]
+    if wedding_date && !wedding_date.is_a?(Date)
+      errors.add(:wedding_date, 'is invalid')
+    end
     unless Phony.plausible?(phone_number, cc: '1')
       errors.add(:phone_number, 'is invalid')
     end
