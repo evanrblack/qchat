@@ -22,9 +22,10 @@ Sequel::Model.strict_param_setting = false
 # Connect to database
 Sequel.connect(ENV['DB_URL'])
 
-# Load models and controllers
+# Load models, controllers, and jobs
 MODEL_DIR = File.join(APP_ROOT, 'models/*.rb')
 CONTROLLER_DIR = File.join(APP_ROOT, 'controllers/*.rb')
-Dir[MODEL_DIR, CONTROLLER_DIR].each do |file|
+JOB_DIR = File.join(APP_ROOT, 'jobs/*.rb')
+Dir[MODEL_DIR, CONTROLLER_DIR, JOB_DIR].each do |file|
   require file
 end

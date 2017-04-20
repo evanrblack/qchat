@@ -1,7 +1,7 @@
 class Message < Sequel::Model
   def validate
     super
-    validates_presence %i[type direction external_id from to text state]
+    validates_presence %i[type direction from to text state]
     %i[from to].each do |side|
       number = send(side)
       errors.add(side, 'is invalid') unless Phony.plausible?(number, cc: '1')

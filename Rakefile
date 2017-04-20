@@ -19,3 +19,10 @@ namespace :db do
     Sequel::Migrator.run(DB, 'db/migrate', relative: -1)
   end
 end
+
+task :environment do
+  require './app'
+end
+
+require 'resque/tasks'
+task 'resque:setup' => :environment

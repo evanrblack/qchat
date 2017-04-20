@@ -48,15 +48,15 @@ gem 'sqlite3'
 
 group :development do
   # Deployment tool
-  gem 'capistrano'
+  gem 'capistrano', require: false
   # RVM tasks for Capistrano
-  gem 'capistrano-rvm'
+  gem 'capistrano-rvm', require: false
   # Bundler tasks for Capistrano
-  gem 'capistrano-bundler'
+  gem 'capistrano-bundler', require: false
   # Thin tasks for Capistrano
-  gem 'capistrano-thin'
+  gem 'capistrano-thin', require: false
   # Resque tasks for Capistrano
-  gem 'capistrano-resque'
+  gem 'capistrano-resque', require: false
 
   # Nicer interactive console
   gem 'pry', require: false

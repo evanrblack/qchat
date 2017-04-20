@@ -31,7 +31,7 @@ Sequel.migration do
 
       String :type, null: false
       String :direction, null: false
-      String :external_id, null: false, unique: true
+      String :external_id, unique: true
       String :from, null: false, index: true
       String :to, null: false, index: true
       String :text, text: true, null: false

@@ -7,20 +7,14 @@ module MessagesController
 
   post '/messages' do
     if @current_user
-      options = {
-        from: @current_user.phone_number,
-        to: params['to'],
-        text: params['text'],
-        receipt_requested: 'all'
-      }
-      result = Bandwidth::Message.create(BANDWIDTH_CLIENT, options)
       @message = Message.create(type: 'sms',
-                                direction: result[:direction],
-                                external_id: result[:id],
-                                from: result[:from],
-                                to: result[:to],
-                                text: result[:text],
-                                state: result[:state])
+                                direction: 'out',
+                                external_id: nil,
+                                from: @current_user.phone_number,
+                                to: params['to'],
+                                text: params['text'],
+                                state: 'pending')
+      Resque.enqueue(MessageSender, @message.id)
       @message.to_json
     elsif params['token'] == settings.webhook_token
       # Callback for both sent and received messages
