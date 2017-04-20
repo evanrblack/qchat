@@ -17,10 +17,16 @@ set :ssh_options, { forward_agent: true, user: fetch(:user),
 set :deploy_via, :remote_cache
 set :deploy_to, "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 
+# Resque
+set :workers, { pending_messages: 1 }
+set :resque_environment_task, true
+
+# Stages
 before 'deploy:started', 'dotenv:upload'
 before 'deploy:started', 'deploy:make_dirs'
 after 'deploy:updated', 'db:migrate'
 after 'deploy:finished', 'thin:smart_restart'
+after 'deploy:finished', 'resque:restart'
 
 namespace :deploy do
   desc "Create directories for pids and sockets"

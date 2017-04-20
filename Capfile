@@ -12,3 +12,4 @@ install_plugin Capistrano::SCM::Git
 require 'capistrano/rvm'
 require 'capistrano/bundler'
 require 'capistrano/thin'
+require 'capistrano-resque'
