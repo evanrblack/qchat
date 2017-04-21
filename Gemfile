@@ -55,8 +55,6 @@ group :development do
   gem 'capistrano-bundler', require: false
   # Thin tasks for Capistrano
   gem 'capistrano-thin', require: false
-  # Resque tasks for Capistrano
-  gem 'capistrano-resque', require: false
 
   # Nicer interactive console
   gem 'pry', require: false
