@@ -26,7 +26,7 @@ before 'deploy:started', 'dotenv:upload'
 before 'deploy:started', 'deploy:make_dirs'
 after 'deploy:updated', 'db:migrate'
 after 'deploy:finished', 'thin:smart_restart'
-after 'deploy:finished', 'resque:restart'
+after 'deploy:finished', 'resque:restart_all'
 
 namespace :deploy do
   desc "Create directories for pids and sockets"
@@ -104,3 +104,32 @@ namespace :dotenv do
   end
 end
 
+# Resque
+namespace :resque do
+  desc "Start all Resque workers"
+  task :start_all do
+    on roles(:app) do
+      within current_path do
+        execute :rake, 'resque:start_all'
+      end
+    end
+  end
+
+  desc "Stop all Resque workers"
+  task :stop_all do
+    on roles(:app) do
+      within current_path do
+        execute :rake, 'resque:stop_all'
+      end
+    end
+  end
+
+  desc "Restart all Resque workers"
+  task :restart_all do
+    on roles(:app) do
+      within current_path do
+        execute :rake, 'resque:restart_all'
+      end
+    end
+  end
+end
