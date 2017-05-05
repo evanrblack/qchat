@@ -43,7 +43,7 @@
         <div id="message-scroll" class="panel-body max-height-60 overflow-y">
           <ul class="list-unstyled">
             <li v-for="m in contact.messages">
-              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'in' }">{{ (m.direction == 'in') ? (contact.first_name || 'Unknown') : 'Admin' }}</strong> {{ m.text }}
+              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'in' }">{{ (m.direction == 'in') ? (contact.first_name || 'Unknown') : 'You' }}</strong> {{ m.text }}
             </li>
           </ul>
         </div>

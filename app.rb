@@ -22,11 +22,12 @@ class App < Sinatra::Base
     set :connections, []
   end
 
-  def notify(type, content)
+  def notify(user_id, type, content)
     # Sequels to_json has nice optionals that to_hash doesnt
     content_hash = JSON.parse(content)
     logger.debug "event: { type: #{type}, content: #{content_hash}}"
-    settings.connections.each do |out|
+    out = settings.connections[user_id]
+    if out
       out << "data: #{{ type: type, content: content_hash }.to_json}\n\n"
     end
   end
@@ -35,8 +36,8 @@ class App < Sinatra::Base
     return 403 unless @current_user
     headers 'X-Accel-Buffering' => 'no'
     stream(:keep_open) do |out|
-      settings.connections << out
-      out.callback { settings.connections.delete(out) }
+      settings.connections[@current_user.id] = out
+      out.callback { settings.connections.delete(@current_user.id) }
     end
   end
 

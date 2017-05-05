@@ -1,4 +1,6 @@
 class User < Sequel::Model
+  one_to_many :contacts
+  
   attr_accessor :password
 
   def validate

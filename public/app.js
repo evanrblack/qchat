@@ -104,11 +104,13 @@ var dashboard = (function() {
 
         var handlers = {
           'new_message': function(contact) {
-            // On that contact already
             if (vue.contact.id == contact.id) {
-              vue.contact = contact
+              // Set the old currently-selected to the new
+              vue.contact = contact;
               vue.contacts[vue.contact.id] = vue.contact;
             } else {
+              // Update the contacts
+              vue.$set(vue.contacts, contact.id) = contact;
               // Set up notification
               var name = 'Unknown';
               var message = contact.messages[contact.messages.length - 1];

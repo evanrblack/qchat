@@ -13,17 +13,21 @@ Sequel.migration do
 
     create_table :contacts do
       primary_key :id
+      foreign_key :user_id, :users
 
       String :first_name
       String :last_name
       String :email
       Date :wedding_date
-      String :phone_number, null: false, unique: true
+      String :phone_number, null: false
       String :lead_source
       String :notes, text: true
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false
+
+      index %i[id user_id], unique: true
+      index %i[phone_number user_id], unique: true
     end
 
     create_table :messages do
@@ -36,6 +40,7 @@ Sequel.migration do
       String :to, null: false, index: true
       String :text, text: true, null: false
       String :state, null: false
+      DateTime :seen_at
 
       DateTime :created_at, null: false
       DateTime :updated_at, null: false

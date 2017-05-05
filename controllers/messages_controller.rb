@@ -26,8 +26,13 @@ module MessagesController
                                 text: params['text'],
                                 state: params['state'])
       if @message.direction == 'in'
-        @contact = Contact.find_or_create(phone_number: @message.from)
-        notify('new_message', @contact.to_json(include: %i[messages]))
+        # Message from and to are normalized after save
+        @user = User.find(phone_number: @message.to)
+        @contact = Contact.find_or_create(phone_number: @message.from,
+                                          user_id: @user.id)
+        puts @user.email
+        @contact_json = @contact.to_json(include: %i[messages])
+        notify(@user.id, 'new_message', @contact_json)
       end
       @message.to_json
     else

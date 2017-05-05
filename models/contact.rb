@@ -1,7 +1,9 @@
 class Contact < Sequel::Model
+  many_to_one :user
+
   def validate
     super
-    validates_presence %i[phone_number]
+    validates_presence %i[user_id phone_number]
     if wedding_date && !wedding_date.is_a?(Date)
       errors.add(:wedding_date, 'is invalid')
     end
@@ -16,15 +18,14 @@ class Contact < Sequel::Model
   end
 
   def messages
-    Message.where('`from` = ? OR `to` = ?', phone_number, phone_number)
-           .order(:created_at)
+    sent_messages.union(received_messages)
   end
 
   def sent_messages
-    Message.where(from: phone_number)
+    Message.where(from: phone_number, to: user.phone_number)
   end
 
   def received_messages
-    Messages.where(to: phone_number)
+    Message.where(to: phone_number, from: user.phone_number)
   end
 end
