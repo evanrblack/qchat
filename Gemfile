@@ -64,6 +64,9 @@ group :development do
 
   # Fake data generator
   gem 'faker', require: false
+
+  # Watches for changes
+  gem 'rerun', require: false
 end
 
 group :production do

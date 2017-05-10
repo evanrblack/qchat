@@ -42,6 +42,7 @@ namespace :resque do
   task :start_all do
     # Create new workers
     ENV['QUEUE'] = '*'
+    ENV['INTERVAL'] = '2'
     ENV['BACKGROUND'] = 'yes'
     MAX_WORKERS.times do |i|
       ENV['PIDFILE'] = "#{PID_DIR}/resque.#{i}.pid"

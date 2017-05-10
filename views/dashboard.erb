@@ -7,11 +7,30 @@
         </div>
         <div class="panel-body max-height-60 overflow-y">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search" v-model="filter">
+            <input type="text" class="form-control" placeholder="Search" v-model="textFilter">
+            <label>
+              <input type="checkbox" v-model="statusFilters.unseen">
+              Unseen only
+            </label>
           </div>
           <div class="list-group">
-            <a href="#" class="list-group-item" v-for="c in contacts" v-bind:class="{ active: c.id == contact.id }" v-if="filterContact(c)" v-on:click="getContact(c.id)">
-              {{ c.first_name }} {{ c.last_name }}<br>{{ c.phone_number }}
+            <a
+              href="#"
+              class="list-group-item"
+              v-for="c in contacts"
+              v-bind:class="{ active: c.id == contact.id }"
+              v-if="filterContact(c)"
+              v-on:click="getContact(c.id)"
+            >
+              {{ c.first_name }} {{ c.last_name }}
+              <span
+                class="label label-warning pull-right"
+                v-if="c.unseen_messages_count > 0"
+              >
+                {{ c.unseen_messages_count }} new
+              </span>
+              <br>
+              {{ c.phone_number }}
             </a>
           </div>
         </div>

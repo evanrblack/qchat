@@ -6,7 +6,8 @@ module ContactsController
   get '/contacts', provides: :json do
     return 403 unless @current_user
     Contact.where(user_id: @current_user.id)
-           .to_json(only: %i[id first_name last_name phone_number])
+           .to_json(only: %i[id first_name last_name phone_number
+                             unseen_messages_count])
   end
 
   post '/contacts', provides: :json do

@@ -2,7 +2,8 @@ var dashboard = (function() {
   new Vue({
     el: '#dashboard',
     data: {
-      filter: '',
+      textFilter: '',
+      statusFilters: { unseen: 0 },
       contacts: {},
       newContact: { phone_number: '' },
       contact: { id: null, messages: [] },
@@ -32,13 +33,24 @@ var dashboard = (function() {
           alert('Unable to get contacts'); 
         });
       },
-      filterContact: function(c) {
-        var lowerCasedFilter = this.filter.toLowerCase();
+      filterByText: function(c) {
+        var lowerCasedFilter = this.textFilter.toLowerCase();
         var concatenated = (c.first_name + ' ' + 
                             c.last_name + ' ' +
                             c.phone_number);
         var lowerCased = concatenated.toLowerCase();
         return lowerCased.includes(lowerCasedFilter);
+      },
+      filterByStatus: function(c) {
+        // Contacts with unseen messages only
+        if (this.statusFilters.unseen) {
+          return c.unseen_messages_count;
+        } else {
+          return true;
+        }
+      },
+      filterContact(c) {
+        return this.filterByStatus(c) && this.filterByText(c);
       },
       getContact: function(id) {
         var path = '/contacts/' + id;
@@ -54,6 +66,10 @@ var dashboard = (function() {
         var path = '/contacts/' + this.contact.id + '/messages';
         this.$http.get(path).then(function(response){
           this.$set(this.contact, 'messages', response.body);
+          for (var message of this.contact.messages) {
+            if (message.seen_at) continue;
+            this.updateMessage(message);
+          }
         }, function(response) {
           alert('Unable to get messages');
         });
@@ -77,6 +93,7 @@ var dashboard = (function() {
           this.contact = response.body;
           this.contacts[this.contact.id] = this.contact;
           this.contact.messages = messages;
+          
         }, function(response) {
           alert('Unable to update contact');
         });
@@ -91,6 +108,16 @@ var dashboard = (function() {
           button.disabled = false;
         }, function(response) {
           alert('Unable to post message');
+        });
+      },
+      updateMessage: function(message) {
+        var messagePath = '/messages/' + message.id;
+        var messageData = { seen_at: new Date() };
+        this.$http.patch(messagePath, messageData).then(function(response) {
+          var updatedMessage = response.body;
+          message.seen_at = updatedMessage.seen_at;
+        }, function(response) {
+          console.log('Unable to update message'); 
         });
       }
     },
@@ -110,7 +137,7 @@ var dashboard = (function() {
               vue.contacts[vue.contact.id] = vue.contact;
             } else {
               // Update the contacts
-              vue.$set(vue.contacts, contact.id) = contact;
+              vue.$set(vue.contacts, contact.id, contact);
               // Set up notification
               var name = 'Unknown';
               var message = contact.messages[contact.messages.length - 1];
@@ -140,7 +167,7 @@ var dashboard = (function() {
 Notification.requestPermission();
 function notify(title, body) {
   if (Notification.permission == 'granted') {
-    return new Notification(title, {body: body});
+    return new Notification(title, { body: body, requireInteraction: false });
   }
 }
 

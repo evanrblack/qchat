@@ -14,4 +14,16 @@ class User < Sequel::Model
       self.password_hash = BCrypt::Password.create(password)
     end
   end
+
+  def messages
+    sent_messages.union(received_messages)
+  end
+
+  def sent_messages
+    Message.where(from: phone_number)
+  end
+
+  def received_messages
+    Message.where(to: phone_number)
+  end
 end

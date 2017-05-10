@@ -13,6 +13,8 @@ BANDWIDTH_CLIENT =
                         api_secret: ENV['BANDWIDTH_API_SECRET'])
 
 # DATABASE + MODELS
+# Set UTC as default
+Sequel.default_timezone = :utc
 # Load sequel and extensions / plugins
 Sequel::Model.plugin :timestamps, update_on_create: true
 Sequel::Model.plugin :validation_helpers

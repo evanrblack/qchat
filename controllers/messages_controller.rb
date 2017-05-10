@@ -30,13 +30,22 @@ module MessagesController
         @user = User.find(phone_number: @message.to)
         @contact = Contact.find_or_create(phone_number: @message.from,
                                           user_id: @user.id)
-        puts @user.email
-        @contact_json = @contact.to_json(include: %i[messages])
+        @contact_json = @contact.to_json(include: %i[messages unseen_messages_count])
         notify(@user.id, 'new_message', @contact_json)
       end
       @message.to_json
     else
       return 403
     end
+  end
+
+  patch '/messages/:id' do
+    return 403 unless @current_user
+    @message = Message.find(id: params['id'])
+    # return 403 unless @current_user.received_messages.include? @message
+    if params['seen_at']
+      @message.update(seen_at: Time.now)
+    end
+    return @message.to_json
   end
 end

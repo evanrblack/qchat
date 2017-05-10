@@ -28,4 +28,8 @@ class Contact < Sequel::Model
   def received_messages
     Message.where(to: phone_number, from: user.phone_number)
   end
+
+  def unseen_messages_count
+    sent_messages.where(seen_at: nil).count
+  end
 end
