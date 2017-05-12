@@ -19,16 +19,17 @@ class App < Sinatra::Base
                                secret: ENV['SECRET_TOKEN'] || 'change_me'
     use Rack::PostBodyContentTypeParser
     helpers Sinatra::Streaming
-    set :connections, []
+    set :connections, {}
   end
 
   def notify(user_id, type, content)
     # Sequels to_json has nice optionals that to_hash doesnt
     content_hash = JSON.parse(content)
-    logger.debug "event: { type: #{type}, content: #{content_hash}}"
-    out = settings.connections[user_id]
-    if out
-      out << "data: #{{ type: type, content: content_hash }.to_json}\n\n"
+    outs = settings.connections[user_id]
+    if outs
+      outs.each do |out|
+        out << "data: #{{ type: type, content: content_hash }.to_json}\n\n"
+      end
     end
   end
 
@@ -36,8 +37,21 @@ class App < Sinatra::Base
     return 403 unless @current_user
     headers 'X-Accel-Buffering' => 'no'
     stream(:keep_open) do |out|
-      settings.connections[@current_user.id] = out
-      out.callback { settings.connections.delete(@current_user.id) }
+      id = @current_user.id
+      connections = settings.connections
+      connections[id] ||= []
+      connections[id] << out
+      
+      out.callback do
+        connections[id].delete(out)
+        connections.delete(id) if connections[id].empty?
+      end
+
+      while connections[id]
+        size = Resque.size("pending_messages_#{id}")
+        notify(id, "pending_messages", size.to_json)
+        sleep 5
+      end
     end
   end
 

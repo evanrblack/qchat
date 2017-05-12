@@ -1,5 +1,9 @@
 class MessageSender
-  @queue = :pending_messages
+  def self.enqueue(message)
+    user = User.find(phone_number: message.from)
+    queue = "pending_messages_#{user.id}"
+    Resque::Job.create(queue, self, message.id)
+  end
 
   def self.perform(message_id)
     message = Message.find(id: message_id)

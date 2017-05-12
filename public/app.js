@@ -8,6 +8,7 @@ var dashboard = (function() {
       newContact: { phone_number: '' },
       contact: { id: null, messages: [] },
       newMessage: { text: '' },
+      pendingMessages: 0,
       eventSource: new EventSource('/stream')
     },
     watch: {
@@ -119,6 +120,17 @@ var dashboard = (function() {
         }, function(response) {
           console.log('Unable to update message'); 
         });
+      },
+      massText: function(event) {
+        var messageData = {
+          to: 'everyone',
+          text: prompt('Text EVERYONE the following:')
+        };
+        if (messageData.text) {
+          this.$http.post('/messages', messageData).then(function(response) {
+            alert(response.body + ' messages queued');
+          });
+        }
       }
     },
     created: function() {
@@ -130,6 +142,9 @@ var dashboard = (function() {
         var content = data.content;
 
         var handlers = {
+          'pending_messages': function(size) {
+            vue.pendingMessages = size;
+          },
           'new_message': function(contact) {
             if (vue.contact.id == contact.id) {
               // Set the old currently-selected to the new

@@ -7,15 +7,30 @@ module MessagesController
 
   post '/messages' do
     if @current_user
-      @message = Message.create(type: 'sms',
-                                direction: 'out',
-                                external_id: nil,
-                                from: @current_user.phone_number,
-                                to: params['to'],
-                                text: params['text'],
-                                state: 'pending')
-      Resque.enqueue(MessageSender, @message.id)
-      @message.to_json
+      if params['to'] == 'everyone'
+        @tos = @current_user.contacts.map(&:phone_number)
+        @tos.each do |to|
+          message = Message.create(type: 'sms',
+                                   direction: 'out',
+                                   external_id: nil,
+                                   from: @current_user.phone_number,
+                                   to: to,
+                                   text: params['text'],
+                                   state: 'pending')
+          MessageSender.enqueue(message)
+        end
+        @tos.count.to_json
+      else
+        @message = Message.create(type: 'sms',
+                                  direction: 'out',
+                                  external_id: nil,
+                                  from: @current_user.phone_number,
+                                  to: params['to'],
+                                  text: params['text'],
+                                  state: 'pending')
+        MessageSender.enqueue(@message)
+        @message.to_json
+      end
     elsif params['token'] == settings.webhook_token
       # Callback for both sent and received messages
       @message = Message.create(type: params['eventType'],
@@ -30,12 +45,13 @@ module MessagesController
         @user = User.find(phone_number: @message.to)
         @contact = Contact.find_or_create(phone_number: @message.from,
                                           user_id: @user.id)
-        @contact_json = @contact.to_json(include: %i[messages unseen_messages_count])
-        notify(@user.id, 'new_message', @contact_json)
+        included = %i[messages unseen_messages_count]
+        contact_json = @contact.to_json(include: included)
+        notify(@user.id, 'new_message', contact_json)
       end
       @message.to_json
     else
-      return 403
+      403
     end
   end
 
@@ -43,9 +59,13 @@ module MessagesController
     return 403 unless @current_user
     @message = Message.find(id: params['id'])
     # return 403 unless @current_user.received_messages.include? @message
-    if params['seen_at']
-      @message.update(seen_at: Time.now)
-    end
-    return @message.to_json
+    @message.update(seen_at: Time.now) if params['seen_at']
+    @message.to_json
   end
+
+  def self.outbound_messages
+      end
+
+  def self.inbound_message
+      end
 end
