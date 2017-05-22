@@ -7,12 +7,19 @@ module MessagesController
 
   post '/messages' do
     if @current_user
+      to = params['to']
+      text = params['text']
+      @contact = Contact.find(phone_number: to,
+                              user_id: @current_user.id)
+      if @contact
+        text.gsub!(/\$\w+/) { |prop| @contact.send(prop[1..-1]) }
+      end
       @message = Message.create(type: 'sms',
                                 direction: 'out',
                                 external_id: nil,
                                 from: @current_user.phone_number,
-                                to: params['to'],
-                                text: params['text'],
+                                to: to,
+                                text: text,
                                 state: 'pending',
                                 seen_at: Time.now)
       MessageSender.enqueue(@message)
