@@ -132,7 +132,13 @@ var dashboard = (function() {
         });
       },
       massText: function(event) {
-        console.log(this.filteredContacts);
+        var text = prompt('Message to send to currently listed contacts:');
+        this.filteredContacts.forEach((c) => {
+          var to = c.phone_number;
+          this.$http.post('/messages', { text: text, to: to }).then(function(response) {
+            if (c == this.contact) this.contact.messages.push(response.body);
+          });
+        });
       }
     },
     created: function() {
