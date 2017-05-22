@@ -7,30 +7,15 @@ module MessagesController
 
   post '/messages' do
     if @current_user
-      if params['to'] == 'everyone'
-        @tos = @current_user.contacts.map(&:phone_number)
-        @tos.each do |to|
-          message = Message.create(type: 'sms',
-                                   direction: 'out',
-                                   external_id: nil,
-                                   from: @current_user.phone_number,
-                                   to: to,
-                                   text: params['text'],
-                                   state: 'pending')
-          MessageSender.enqueue(message)
-        end
-        @tos.count.to_json
-      else
-        @message = Message.create(type: 'sms',
-                                  direction: 'out',
-                                  external_id: nil,
-                                  from: @current_user.phone_number,
-                                  to: params['to'],
-                                  text: params['text'],
-                                  state: 'pending')
-        MessageSender.enqueue(@message)
-        @message.to_json
-      end
+      @message = Message.create(type: 'sms',
+                                direction: 'out',
+                                external_id: nil,
+                                from: @current_user.phone_number,
+                                to: params['to'],
+                                text: params['text'],
+                                state: 'pending')
+      MessageSender.enqueue(@message)
+      @message.to_json
     elsif params['token'] == settings.webhook_token
       # Callback for both sent and received messages
       @message = Message.create(type: params['eventType'],
@@ -62,10 +47,4 @@ module MessagesController
     @message.update(seen_at: Time.now) if params['seen_at']
     @message.to_json
   end
-
-  def self.outbound_messages
-      end
-
-  def self.inbound_message
-      end
 end

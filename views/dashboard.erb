@@ -19,7 +19,6 @@
               class="list-group-item"
               v-for="c in contacts"
               v-bind:class="{ active: c.id == contact.id }"
-              v-if="filterContact(c)"
               v-on:click="getContact(c.id)"
             >
               {{ c.first_name }} {{ c.last_name }}
@@ -100,6 +99,9 @@
             </div>
           </div>
           <div class="panel-footer text-right">
+            <button type="button" class="btn btn-danger" v-if="contact.id" v-on:click="deleteContact">
+              Delete
+            </button>
             <button type="submit" class="btn btn-primary" v-if="contact.id">Save</button>
           </div>
         </form>

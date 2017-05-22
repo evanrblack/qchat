@@ -24,7 +24,6 @@ module ContactsController
                        nil
                      end
         contact.wedding_date = fixed_date
-
         begin
           contact.save
         rescue
@@ -47,6 +46,13 @@ module ContactsController
     return 403 unless @current_user
     @contact = Contact.find(id: params['id'], user_id: @current_user.id)
     @contact.update_all(params)
+    @contact.to_json
+  end
+
+  delete '/contacts/:id', provides: :json do
+    return 403 unless @current_user
+    @contact = Contact.find(id: params['id'], user_id: @current_user.id)
+    @contact.delete
     @contact.to_json
   end
 
