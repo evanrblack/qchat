@@ -14,7 +14,8 @@ var dashboard = (function() {
         wedding_date: null,
         phone_number: null,
         lead_source: null,
-        messages: []
+        messages: [],
+        unseen_messages_count: null,
       },
       newMessage: { text: '' },
       pendingMessages: 0,
@@ -34,17 +35,17 @@ var dashboard = (function() {
       },
       filteredContacts: function() {
         var contacts = this.contacts;
+        var lowerCasedTextFilter = this.textFilter.toLowerCase();
         // filter by text
-        /*var lowerCasedTextFilter = this.textFilter.toLowerCase();
         contacts = contacts.filter((c) => {
           var concatenated = (`${c.first_name} ${c.last_name} ${c.phone_number}`);
           var lowerCased = concatenated.toLowerCase();
           return lowerCased.includes(lowerCasedTextFilter);
-        });*/
+        });
         // filter by unseen
-        /* if (this.statusFilters.unseen) {
+        if (this.statusFilters.unseen) {
           contacts = contacts.filter((c) => c.unseen_messages_count > 0);
-        } */
+        }
         return contacts;
       }
     },
@@ -121,14 +122,15 @@ var dashboard = (function() {
           alert('Unable to post message');
         });
       },
-      updateMessage: function(event) {
+      updateMessage: function(message) {
         var messagePath = `/messages/${message.id}`;
         var messageData = { seen_at: new Date() };
         this.$http.patch(messagePath, messageData).then(function(response) {
           var updatedMessage = response.body;
           message.seen_at = updatedMessage.seen_at;
+          this.contact.unseen_messages_count -= 1;
         }, function(response) {
-          console.log('Unable to update message'); 
+          alert('Unable to update message'); 
         });
       },
       massText: function(event) {
@@ -158,7 +160,7 @@ var dashboard = (function() {
             oldContact
               ? Object.assign(oldContact, contact)
               : vue.contacts.push(contact);
-            if (vue.contact.id == contact.id) {
+            if (vue.contact.id != contact.id) {
               // Set up notification
               var name = 'Unknown';
               var message = contact.messages[contact.messages.length - 1];

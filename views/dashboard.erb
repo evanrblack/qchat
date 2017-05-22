@@ -17,7 +17,7 @@
             <a
               href="#"
               class="list-group-item"
-              v-for="c in contacts"
+              v-for="c in filteredContacts"
               v-bind:class="{ active: c.id == contact.id }"
               v-on:click="getContact(c.id)"
             >
@@ -63,8 +63,18 @@
         </div>
         <div id="message-scroll" class="panel-body max-height-60 overflow-y">
           <ul class="list-unstyled">
-            <li v-for="m in contact.messages">
-              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'in' }">{{ (m.direction == 'in') ? (contact.first_name || 'Unknown') : 'You' }}</strong> {{ m.text }}
+            <li v-for="m in contact.messages" class="message" v-bind:class="{ unseen: !m.seen_at }">
+              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'in' }">{{ (m.direction == 'in') ? (contact.first_name || 'Unknown') : 'You' }}</strong>
+              <span>{{ m.text }}</span>
+              <button
+                type="button"
+                style="float: right"
+                class="btn btn-sm btn-default"
+                v-if="!m.seen_at"
+                v-on:click="updateMessage(m)"
+              >
+                <i class="fa fa-eye"></i>
+              </button>
             </li>
           </ul>
         </div>

@@ -10,3 +10,10 @@
   overflow-y: auto;
 }
 
+.message {
+  padding-bottom: 5px;
+}
+
+.unseen {
+  background-color: lightyellow;
+}

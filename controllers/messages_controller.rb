@@ -13,7 +13,8 @@ module MessagesController
                                 from: @current_user.phone_number,
                                 to: params['to'],
                                 text: params['text'],
-                                state: 'pending')
+                                state: 'pending',
+                                seen_at: Time.now)
       MessageSender.enqueue(@message)
       @message.to_json
     elsif params['token'] == settings.webhook_token
