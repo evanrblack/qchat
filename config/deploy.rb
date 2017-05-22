@@ -59,7 +59,8 @@ namespace :thin do
   task :smart_restart do
     on roles(:app) do
       if test "[ -f #{pid_path} ]"
-        invoke 'thin:restart'
+        invoke 'thin:stop'
+        invoke 'thin:start'
       else
         invoke 'thin:start'
       end
