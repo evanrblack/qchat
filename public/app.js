@@ -35,12 +35,15 @@ var dashboard = (function() {
       },
       filteredContacts: function() {
         var contacts = this.contacts;
-        var lowerCasedTextFilter = this.textFilter.toLowerCase();
+        var textFilter = this.textFilter.toLowerCase();
         // filter by text
         contacts = contacts.filter((c) => {
-          var concatenated = (`${c.first_name} ${c.last_name} ${c.phone_number}`);
-          var lowerCased = concatenated.toLowerCase();
-          return lowerCased.includes(lowerCasedTextFilter);
+          var fullName = (`${c.first_name} ${c.last_name}`).toLowerCase();
+          var phoneNumber = c.phone_number;
+          var leadSource = (c.lead_source || '').toLowerCase();
+          return fullName.includes(textFilter)
+            || phoneNumber.includes(textFilter)
+            || leadSource.includes(textFilter);
         });
         // filter by unseen
         if (this.statusFilters.unseen) {

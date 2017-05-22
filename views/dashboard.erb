@@ -22,6 +22,9 @@
               v-on:click="getContact(c.id)"
             >
               {{ c.first_name }} {{ c.last_name }}
+              <span style="font-size: 1rem; font-style: italic" v-if="c.lead_source">
+                ({{c.lead_source}})
+              </span>
               <span
                 class="label label-warning pull-right"
                 v-if="c.unseen_messages_count > 0"
