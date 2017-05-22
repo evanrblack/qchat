@@ -167,10 +167,10 @@ var dashboard = (function() {
               // Set up notification
               var name = 'Unknown';
               var message = contact.messages[contact.messages.length - 1];
-              if (contact.first_name && contact.last_name) {
+              if (contact.first_name || contact.last_name) {
                 name = `${contact.first_name} ${contact.last_name}`;
               }
-              var title = `${name} (${contact.phone_number})`;
+              var title = `${name} @ ${contact.phone_number}`;
               // Create notification
               var notification = notify(title, message.text);
               notification.onclick = function(event) {
