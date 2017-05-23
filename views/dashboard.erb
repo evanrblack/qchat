@@ -85,7 +85,7 @@
           <form action="/messages" method="post" v-on:submit.prevent="addMessage" v-if="contact.id">
             <input type="hidden" name="to" v-model="contact.phone_number">
             <div class="input-group">
-              <input type="text" name="text" class="form-control" autocomplete="off" placeholder="Message" v-model.lazy="newMessage.text">
+              <input type="text" name="text" class="form-control" autocomplete="off" placeholder="Message" v-model="newMessage.text">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">Send</button>
               </span>
