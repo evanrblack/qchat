@@ -12,7 +12,14 @@ module MessagesController
       @contact = Contact.find(phone_number: to,
                               user_id: @current_user.id)
       if @contact
-        text.gsub!(/\$\w+/) { |prop| @contact.send(prop[1..-1]) }
+        text.gsub!(/\$\w+/) do |prop|
+          method = prop[1..-1]
+          if @contact.methods.map(&:to_s).include? method
+            @contact.send(method)
+          else
+            prop
+          end
+        end
       end
       @message = Message.create(type: 'sms',
                                 direction: 'out',
