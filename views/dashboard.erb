@@ -66,9 +66,10 @@
         </div>
         <div id="message-scroll" class="panel-body max-height-60 overflow-y">
           <ul class="list-unstyled">
-            <li v-for="m in contact.messages" class="message" v-bind:class="{ unseen: !m.seen_at }">
-              <strong class="label label-primary" v-bind:class="{ 'label-success': m.direction == 'in' }">{{ (m.direction == 'in') ? (contact.first_name || 'Unknown') : 'You' }}</strong>
+            <li v-for="m in formattedMessages" class="message" v-bind:class="[(m.direction == 'in' ? 'inbound' : 'outbound' ), { 'unseen': !m.seen_at }]">
               <span>{{ m.text }}</span>
+              <br>
+              <span class="small">{{ m.sender }} --- {{ m.created_at }}</span>
               <button
                 type="button"
                 style="float: right"
@@ -85,8 +86,8 @@
           <form action="/messages" method="post" v-on:submit.prevent="addMessage" v-if="contact.id">
             <input type="hidden" name="to" v-model="contact.phone_number">
             <div class="input-group">
-              <input type="text" name="text" class="form-control" autocomplete="off" placeholder="Message" v-model="newMessage.text">
-              <span class="input-group-btn">
+              <textarea name="text" class="form-control" autocomplete="off" placeholder="Message" v-model="newMessage.text"></textarea>
+              <span class="input-group-btn" style="vertical-align: bottom">
                 <button type="submit" class="btn btn-primary">Send</button>
               </span>
             </div>

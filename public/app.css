@@ -11,9 +11,31 @@
 }
 
 .message {
-  padding-bottom: 5px;
+  padding: 5px;
+  margin-bottom: 5px;
+  width: 70%;
+  color: #333;
 }
 
-.unseen {
-  background-color: lightyellow;
+.outbound {
+  margin-right: 30%;
+  background-color: lightblue;
+}
+
+.inbound {
+  margin-left: 30%;
+  background-color: lightgreen;
+}
+
+.inbound.unseen {
+  background-color: springgreen;
+}
+
+textarea {
+  resize: none
+}
+
+.small {
+  font-size: 1rem;
+  color: #666;
 }

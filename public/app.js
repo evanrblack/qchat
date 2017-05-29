@@ -26,7 +26,7 @@ var dashboard = (function() {
         setTimeout(function() {
           var container = document.querySelector('#message-scroll');
           container.scrollTop = container.scrollHeight;
-        }, 300);
+        }, 100);
       }
     },
     computed: {
@@ -50,6 +50,19 @@ var dashboard = (function() {
           contacts = contacts.filter((c) => c.unseen_messages_count > 0);
         }
         return contacts;
+      },
+      formattedMessages: function() {
+        if (!this.contact.messages) return;
+        return this.contact.messages.map((m) => {
+          m = Object.assign({}, m);
+          var parsed = moment.utc(m.created_at.replace(' UTC', '')).local();
+          // m.created_at = parsed.format('MM/DD/YY hh:mm A');
+          m.created_at = parsed.calendar();
+          m.sender = m.direction == 'in'
+            ? this.contactName(this.contact)
+            : 'You';
+          return m;
+        }); 
       }
     },
     methods: {
@@ -144,6 +157,10 @@ var dashboard = (function() {
             if (c == this.contact) this.contact.messages.push(response.body);
           });
         });
+      },
+      contactName: function(contact) {
+        var formatted = `${contact.first_name} ${contact.last_name}`.trim();
+        return formatted == '' ? 'Unknown' : formatted;
       }
     },
     created: function() {
