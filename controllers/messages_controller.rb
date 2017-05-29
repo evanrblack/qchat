@@ -45,7 +45,7 @@ module MessagesController
         @user = User.find(phone_number: @message.to)
         @contact = Contact.find_or_create(phone_number: @message.from,
                                           user_id: @user.id)
-        included = %i[messages unseen_messages_count]
+        included = %i[messages unseen_messages_count unresponsive]
         contact_json = @contact.to_json(include: included)
         notify(@user.id, 'new_message', contact_json)
       end

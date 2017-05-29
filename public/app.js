@@ -3,7 +3,7 @@ var dashboard = (function() {
     el: '#dashboard',
     data: {
       textFilter: '',
-      statusFilters: { unseen: 0 },
+      statusFilters: { unseen: 0, unresponsive: 0 },
       contacts: [],
       newContact: { phone_number: '' },
       contact: {
@@ -48,6 +48,9 @@ var dashboard = (function() {
         // filter by unseen
         if (this.statusFilters.unseen) {
           contacts = contacts.filter((c) => c.unseen_messages_count > 0);
+        }
+        if (this.statusFilters.unresponsive) {
+          contacts = contacts.filter((c) => c.unresponsive);
         }
         return contacts;
       },

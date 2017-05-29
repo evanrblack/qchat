@@ -12,6 +12,12 @@
               <input type="checkbox" v-model="statusFilters.unseen">
               Unseen only
             </label>
+            &nbsp;
+            <label>
+              <input type="checkbox" v-model="statusFilters.unresponsive">
+              Unresponsive only
+            </label>
+
           </div>
           <div class="list-group">
             <a
@@ -30,6 +36,9 @@
                 v-if="c.unseen_messages_count > 0"
               >
                 {{ c.unseen_messages_count }} new
+              </span>
+              <span class="label label-info pull-right" v-if="c.unresponsive">
+                Unresponsive
               </span>
               <br>
               {{ c.phone_number }}

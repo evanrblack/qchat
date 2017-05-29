@@ -32,4 +32,8 @@ class Contact < Sequel::Model
   def unseen_messages_count
     sent_messages.where(seen_at: nil).count
   end
+
+  def unresponsive
+    sent_messages.empty?
+  end
 end
