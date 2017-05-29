@@ -162,7 +162,7 @@ var dashboard = (function() {
         });
       },
       contactName: function(contact) {
-        var formatted = `${contact.first_name} ${contact.last_name}`.trim();
+        var formatted = `${contact.first_name || ''} ${contact.last_name || ''}`.trim();
         return formatted == '' ? 'Unknown' : formatted;
       }
     },
