@@ -9,7 +9,7 @@ class MessageSender
     message = Message.find(id: message_id)
     options = { from: message.from, to: message.to, text: message.text }
     result = Bandwidth::Message.create(BANDWIDTH_CLIENT, options)
-    message.update(external_id: result[:messageId], state: result[:state])
+    message.update(external_id: result[:message_id], state: result[:state])
   end
 end
 
