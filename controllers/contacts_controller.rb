@@ -14,16 +14,19 @@ module ContactsController
     return 403 unless @current_user
     if params['file']
       CSV.foreach(params['file'][:tempfile], headers: true) do |row|
-        contact = Contact.new(user_id: @current_user.id)
-        %w[first_name last_name email phone_number lead_source].each do |attr|
-          contact.send("#{attr}=", row[attr])
+        phone_number = Phony.normalize(row['phone_number'], cc: '1')
+        contact = Contact.find_or_create(user_id: @current_user.id, phone_number: phone_number)
+        %w[first_name last_name email lead_source].each do |attr|
+          contact.send("#{attr}=", row[attr]) if row[attr]
         end
-        fixed_date = begin
-                       Date.strptime(row['wedding_date'], '%m/%d/%Y')
-                     rescue
-                       nil
-                     end
-        contact.wedding_date = fixed_date
+        if row['wedding_date']
+          fixed_date = begin
+                         Date.strptime(row['wedding_date'], '%m/%d/%Y')
+                       rescue
+                         nil
+                       end
+          contact.wedding_date = fixed_date
+        end
         begin
           contact.save
         rescue
