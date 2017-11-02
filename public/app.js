@@ -11,9 +11,8 @@ var dashboard = (function() {
         first_name: null,
         last_name: null,
         email: null,
-        wedding_date: null,
         phone_number: null,
-        lead_source: null,
+        tags: null,
         messages: [],
         unseen_messages_count: null,
       },
@@ -40,10 +39,10 @@ var dashboard = (function() {
         contacts = contacts.filter((c) => {
           var fullName = (`${c.first_name} ${c.last_name}`).toLowerCase();
           var phoneNumber = c.phone_number;
-          var leadSource = (c.lead_source || '').toLowerCase();
+          var tags = (c.tags || '').toLowerCase();
           return fullName.includes(textFilter)
             || phoneNumber.includes(textFilter)
-            || leadSource.includes(textFilter);
+            || tags.includes(textFilter);
         });
         // filter by unseen
         if (this.statusFilters.unseen) {
@@ -175,8 +174,8 @@ var dashboard = (function() {
         var content = data.content;
 
         var handlers = {
-          'pending_messages': function(size) {
-            vue.pendingMessages = size;
+          'pending_messages': function(object) {
+            vue.pendingMessages = object.count;
           },
           'new_message': function(contact) {
             var oldContact = vue.contacts.find((c) => c.id == contact.id);

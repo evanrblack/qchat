@@ -18,9 +18,8 @@ Sequel.migration do
       String :first_name
       String :last_name
       String :email
-      Date :wedding_date
       String :phone_number, null: false
-      String :lead_source
+      String :tags
       String :notes, text: true
 
       DateTime :created_at, null: false

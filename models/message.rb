@@ -17,4 +17,16 @@ class Message < Sequel::Model
   def contact
     Contact.find(phone_number: from)
   end
+
+  def plivoize
+    [from, [to], text]
+  end
+
+  def self.unplivoize(params)
+    Message.new(external_id: params['MessageUUID'],
+                from: params['From'],
+                to: params['To'],
+                direction: 'in',
+                content: params['Text'])
+  end
 end

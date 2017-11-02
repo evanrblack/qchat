@@ -7,10 +7,9 @@ ENV['RACK_ENV'] ||= 'development'
 Dotenv.load(".env.#{ENV['RACK_ENV']}")
 
 # BANDWIDTH
-BANDWIDTH_CLIENT =
-  Bandwidth::Client.new(user_id: ENV['BANDWIDTH_USER_ID'],
-                        api_token: ENV['BANDWIDTH_API_TOKEN'],
-                        api_secret: ENV['BANDWIDTH_API_SECRET'])
+PLIVO_AUTH_ID = ENV['PLIVO_AUTH_ID']
+PLIVO_AUTH_TOKEN = ENV['PLIVO_AUTH_TOKEN']
+PLIVO_CLIENT = Plivo::RestClient.new(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN)
 
 # DATABASE + MODELS
 # Set UTC as default
@@ -22,7 +21,7 @@ Sequel::Model.plugin :json_serializer
 # Turn off strict param setting
 Sequel::Model.strict_param_setting = false
 # Connect to database
-Sequel.connect(ENV['DB_URL'])
+Sequel.connect(ENV['DATABASE_URL'])
 
 # Load models, controllers, and jobs
 MODEL_DIR = File.join(APP_ROOT, 'models/*.rb')

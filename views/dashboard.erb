@@ -28,8 +28,8 @@
               v-on:click="getContact(c.id)"
             >
               {{ c.first_name }} {{ c.last_name }}
-              <span style="font-size: 1rem; font-style: italic" v-if="c.lead_source">
-                ({{c.lead_source}})
+              <span style="font-size: 1rem; font-style: italic" v-if="c.tags">
+                ({{c.tags}})
               </span>
               <span
                 class="label label-warning pull-right"
@@ -112,7 +112,7 @@
         <form v-bind:action="contactPath" method="post" v-on:submit.prevent="updateContact">
           <div class="panel-body max-height-60 overflow-y">
             <div v-if="contact.id">
-            <% {first_name: 'text', last_name: 'text', email: 'email', wedding_date: 'date', phone_number: 'tel', lead_source: 'text'}.each do |k, v| %>
+            <% {first_name: 'text', last_name: 'text', email: 'email', phone_number: 'tel', tags: 'text'}.each do |k, v| %>
               <div class="form-group">
                 <label for="<%= k %>"><%= k %></label>
                 <input type="<%= v %>" name="<%= k %>" class="form-control" v-model.lazy="contact.<%= k %>">

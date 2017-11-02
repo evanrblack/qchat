@@ -1,7 +1,7 @@
 require 'faker'
 
 User.create(email: 'admin@example.com', password: 'wordpass',
-            phone_number: ENV['BANDWIDTH_PHONE_NUMBER'])
+            phone_number: ENV['PLIVO_PHONE_NUMBER'])
 
 #20.times do
 #  first_name = Faker::Name.first_name
