@@ -4,9 +4,11 @@ require 'json'
 
 # ENV VARS
 ENV['RACK_ENV'] ||= 'development'
-Dotenv.load(".env.#{ENV['RACK_ENV']}")
 
-# BANDWIDTH
+# RESQUE
+Resque.redis = ENV['REDIS_URL']
+
+# PLIVO
 PLIVO_AUTH_ID = ENV['PLIVO_AUTH_ID']
 PLIVO_AUTH_TOKEN = ENV['PLIVO_AUTH_TOKEN']
 PLIVO_CLIENT = Plivo::RestClient.new(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN)
