@@ -1,3 +1,3 @@
-web: rackup --port $PORT --env $RACK_ENV
-release: rake db:migrate
-worker: sidekiq -r ./app.rb
+web: bundle exec rackup --port $PORT --env $RACK_ENV
+release: bundle exec rake db:migrate
+worker: bundle exec sidekiq -r ./app.rb -c 4
