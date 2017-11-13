@@ -27,20 +27,12 @@ gem 'dotenv'
 gem 'bcrypt'
 # Handles phone numbers
 gem 'phony'
-# Database adapter
-gem 'sqlite3'
 # Handles SMS
 gem 'plivo', '>= 4.0.0.beta.2'
 
 group :development do
-  # Deployment tool
-  gem 'capistrano', require: false
-  # RVM tasks for Capistrano
-  gem 'capistrano-rvm', require: false
-  # Bundler tasks for Capistrano
-  gem 'capistrano-bundler', require: false
-  # Thin tasks for Capistrano
-  gem 'capistrano-thin', require: false
+  # Database adapter
+  gem 'sqlite3'
 
   # Nicer interactive console
   gem 'pry', require: false
@@ -53,6 +45,8 @@ group :development do
 end
 
 group :production do
+  # Database adapter
+  gem 'pg'
 end
 
 group :test do
