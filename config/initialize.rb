@@ -6,6 +6,7 @@ require 'json'
 ENV['RACK_ENV'] ||= 'development'
 
 # RESQUE
+ENV['REDIS_URL'] ||= 'localhost:6379'
 Resque.redis = ENV['REDIS_URL']
 
 # PLIVO
