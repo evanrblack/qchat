@@ -2,7 +2,7 @@ module MessagesController
   extend Sinatra::Extension
 
   configure do
-    set :webhook_token, ENV['WEBHOOK_TOKEN']
+    set :webhook_token, ENV['PLIVO_WEBHOOK_TOKEN']
   end
 
   helpers do
