@@ -10,6 +10,7 @@ class User < Sequel::Model
   end
 
   def before_validation
+    super
     if password && !password_hash
       self.password_hash = BCrypt::Password.create(password)
     end
