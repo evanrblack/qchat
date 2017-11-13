@@ -48,8 +48,7 @@ class App < Sinatra::Base
       end
 
       while connections[id]
-        count = Resque.size("pending_messages_#{id}")
-        notify(id, "pending_messages", { count: count }.to_json)
+        notify(id, "pending_messages", { count: 0 }.to_json)
         sleep 5
       end
     end

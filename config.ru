@@ -1,12 +1,10 @@
 require_relative 'app'
+require 'sidekiq/web'
 
 map '/' do 
   run App.new
 end
 
-require 'resque/server'
-
-map '/resque' do
-  run Resque::Server.new
+map '/sidekiq' do
+  run Sidekiq::Web
 end
-

@@ -5,10 +5,6 @@ require 'json'
 # ENV VARS
 ENV['RACK_ENV'] ||= 'development'
 
-# RESQUE
-ENV['REDIS_URL'] ||= 'localhost:6379'
-Resque.redis = ENV['REDIS_URL']
-
 # PLIVO
 PLIVO_AUTH_ID = ENV['PLIVO_AUTH_ID']
 PLIVO_AUTH_TOKEN = ENV['PLIVO_AUTH_TOKEN']
@@ -29,7 +25,7 @@ Sequel.connect(ENV['DATABASE_URL'])
 # Load models, controllers, and jobs
 MODEL_DIR = File.join(APP_ROOT, 'models/*.rb')
 CONTROLLER_DIR = File.join(APP_ROOT, 'controllers/*.rb')
-JOB_DIR = File.join(APP_ROOT, 'jobs/*.rb')
-Dir[MODEL_DIR, CONTROLLER_DIR, JOB_DIR].each do |file|
+WORKER_DIR = File.join(APP_ROOT, 'workers/*.rb')
+Dir[MODEL_DIR, CONTROLLER_DIR, WORKER_DIR].each do |file|
   require file
 end

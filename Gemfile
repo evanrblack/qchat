@@ -11,24 +11,20 @@ gem 'sinatra-flash'
 gem 'rack-contrib'
 # Fast and simple web server
 gem 'thin'
-# Communication with Redis
-gem 'redis'
 # Simple task interface
 gem 'rake'
-# Easy background jobs using Redis
-gem 'resque'
 # ORM, like ActiveRecord
 gem 'sequel'
 # REST client
 gem 'faraday'
-# Manage environment variables
-gem 'dotenv'
 # Password hasher
 gem 'bcrypt'
 # Handles phone numbers
 gem 'phony'
 # Handles SMS
 gem 'plivo', '>= 4.0.0.beta.2'
+# Background job worker
+gem 'sidekiq'
 
 group :development do
   # Database adapter

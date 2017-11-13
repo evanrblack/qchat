@@ -1,7 +1,3 @@
-require 'dotenv'
-ENV['RACK_ENV'] ||= 'development'
-Dotenv.load(".env.#{ENV['RACK_ENV']}")
-
 namespace :db do
   require 'sequel'
   Sequel.extension :migration
@@ -18,11 +14,4 @@ namespace :db do
     puts "Rolling back database..."
     Sequel::Migrator.run(DB, 'db/migrate', relative: -1)
   end
-end
-
-require 'resque/tasks'
-task 'resque:setup' => :environment
-
-task :environment do
-  require './app'
 end
