@@ -23,7 +23,7 @@ module MessagesController
                                 state: 'pending',
                                 seen_at: Time.now)
 
-      MessageSender.enqueue(@message)
+      MessageSender.enqueue(@message.id)
       @message.to_json
     end
 

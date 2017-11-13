@@ -15,7 +15,7 @@ PLIVO_CLIENT = Plivo::RestClient.new(PLIVO_AUTH_ID, PLIVO_AUTH_TOKEN)
 # Set UTC as default
 Sequel.default_timezone = :utc
 # Load sequel and extensions / plugins
-Sequel::Model.plugin :timestamps, update_on_create: true
+Sequel::Model.plugin :timestamps, force: true, update_on_create: true
 Sequel::Model.plugin :validation_helpers
 Sequel::Model.plugin :json_serializer
 # Turn off strict param setting
