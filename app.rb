@@ -46,11 +46,6 @@ class App < Sinatra::Base
         connections[id].delete(out)
         connections.delete(id) if connections[id].empty?
       end
-
-      while connections[id]
-        notify(id, "pending_messages", { count: 0 }.to_json)
-        sleep 5
-      end
     end
   end
 

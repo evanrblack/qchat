@@ -17,7 +17,6 @@ var dashboard = (function() {
         unseen_messages_count: null,
       },
       newMessage: { text: '' },
-      pendingMessages: 0,
       eventSource: new EventSource('/stream')
     },
     watch: {
@@ -174,9 +173,6 @@ var dashboard = (function() {
         var content = data.content;
 
         var handlers = {
-          'pending_messages': function(object) {
-            vue.pendingMessages = object.count;
-          },
           'new_message': function(contact) {
             var oldContact = vue.contacts.find((c) => c.id == contact.id);
             oldContact
